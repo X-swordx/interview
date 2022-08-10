@@ -11,22 +11,33 @@
 
 ## 03. 什么是BFC
 
-BFC 即 Block Formatting Contexts(块级格式上下文)。它是页面中的一块区域，它决定了子元素将如何定位，以及和其他元素的关系和相互作用。
+Formatting context(格式化上下文) 是 W3C CSS2.1 规范中的一个概念。它是页面中的一块渲染区域，并且有一套渲染规则，它决定了其子元素将如何定位，以及和其他元素的关系和相互作用。
 
 具有BFC特性的元素可以看做是隔离的容器，它的子元素在布局上不会影响到外面的元素
 
+## BFC的原理布局规则
+
+- 内部的Box会在垂直方向，一个接一个地放置
+- Box垂直方向的距离由margin决定。属于同一个BFC的两个相邻Box的margin会发生重叠
+- 每个元素的margin box的左边， 与包含块border box的左边相接触(对于从左往右的格式化，否则相反
+- BFC的区域不会与float box重叠
+- BFC是一个独立容器，容器里面的子元素不会影响到外面的元素
+- 计算BFC的高度时，浮动元素也参与计算高度
+- 元素的类型和display属性，决定了这个Box的类型。不同类型的Box会参与不同的Formatting Context。
 ## 04. 触发BFC的条件
 
-- float 不为 none
-- position 的值不是 static 或 relative
-- overflow 的值不是 visible
-- display 的值是 inline-block / table-cell / flex / inline-flex / table-caption
+- html根元素
+- 浮动元素：float 除 none 以外的值
+- 绝对定位元素：position (absolute、fixed)
+- display 为 inline-block、table-cells、flex
+- overflow 除了 visible 以外的值 (hidden、auto、scroll)
 
-## 05. BFC的作用
 
-- 解决 margin-top 向上传递的问题
-- 解决 margin 上下叠加的问题
-- 清除浮动
+## 05. BFC的特性
+
+- 同一个 BFC 下外边距会发生折叠
+- BFC 可以包含浮动的元素（清除浮动）
+- BFC 可以阻止元素被浮动元素覆盖（实现图文效果）
 
 ## 06. 清除浮动的方式
 
