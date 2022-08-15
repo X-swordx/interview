@@ -1,36 +1,68 @@
-let obj = {
-  num: 0,
-  str: 'a',
-  boolean: true,
-  null: null,
-  unf: undefined,
-  arr: [3, 4, 5],
-  obj: {name: '我是一个对象', id: 1},
-  func: function() {console.log('我是函数')},
-  date: new Date(0),
-  reg: new RegExp('/我是一个正则/ig'),
-  [Symbol(1)]: 1,
-  bigint: BigInt(1)
+// 模拟实现一个深拷贝，并考虑对象相互引用以及 Symbol 拷贝的情况
+
+const symbolName = Symbol();
+const obj = {
+  objNumber: new Number(1),
+  number: 1,
+  objString: new String('ss'),
+  string: 'string',
+  objRegexp: new RegExp('\\w'),
+  regexp: /w+/g,
+  date: new Date(),
+  function: function () { },
+  array: [{ a: 1 }, 2],
+  [symbolName]: 111
 }
+obj.d = obj;
 
-obj.xx = {
-  0: obj
-}
+const isObject = obj => obj !== null && (typeof obj === 'object' || typeof obj === 'function');
+const isFunction = obj => typeof obj === 'function'
+function deepClone (obj, hash = new WeakMap()) {
+  if (hash.get(obj)) {
+    // 环处理
+    return hash.get(obj);
+  }
+  if (!isObject(obj)) {
+    return obj;
+  }
 
-const isComplexDataType = obj => typeof obj === 'object' && obj !== null
+  if (isFunction(obj)) {
+    // function返回原引用
+    return obj;
+  }
 
-function deepClone (obj, hash = new WeakMap) {
-  if (obj.constructor === 'Date') return new Date(obj)
-  if (obj.constructor === 'RegExp') return new RegExp(obj)
+  let cloneObj;
 
-  if (hash.has(obj)) return obj
-  hash.set(obj)
-  
-  let cloneObj = Object.create(Object.getPrototypeOf(obj), Object.getOwnPropertyDescriptors(obj))
+  const Constructor = obj.constructor;
 
-  Reflect.ownKeys(obj).forEach(key => {
-    cloneObj[key] = isComplexDataType(obj[key]) ? deepClone(obj[key], hash) : obj[key]
+  switch (Constructor) {
+    case Boolean:
+    case Date:
+      return new Date(+obj);
+    case Number:
+    case String:
+    case RegExp:
+      return new Constructor(obj);
+    default:
+      cloneObj = new Constructor();
+      hash.set(obj, cloneObj);
+  }
+
+  [...Object.getOwnPropertyNames(obj), ...Object.getOwnPropertySymbols(obj)].forEach(k => {
+    cloneObj[k] = deepClone(obj[k], hash);
   })
-
-  return cloneObj
+  return cloneObj;
 }
+
+
+const o = deepClone(obj)
+console.log(o.objNumber === obj.objNumber);
+console.log(o.number === obj.number);
+console.log(o.objString === obj.objString);
+console.log(o.string === obj.string);
+console.log(o.objRegexp === obj.objRegexp);
+console.log(o.regexp === obj.regexp);
+console.log(o.date === obj.date);
+console.log(o.function === obj.function);
+console.log(o.array[0] === obj.array[0]);
+console.log(o[symbolName] === obj[symbolName]);
