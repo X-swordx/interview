@@ -17,6 +17,8 @@ obj.d = obj;
 
 const isObject = obj => obj !== null && (typeof obj === 'object' || typeof obj === 'function');
 const isFunction = obj => typeof obj === 'function'
+
+// 实现代码如下:
 function deepClone (obj, hash = new WeakMap()) {
   if (hash.get(obj)) {
     // 环处理
