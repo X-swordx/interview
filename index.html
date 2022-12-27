@@ -10,15 +10,11 @@
   <script src="./自测防抖和节流.js">
   </script>
   <script>
-    function test (e) {
-      console.log('run...', e)
+    Array.prototype.abc = function () {
+      return this.concat(this);
     }
-
-    // let fn = debounce(test, 1000, true)
-
-    let fn = throttle(test, 1000, true)
-
-    window.addEventListener('resize', fn)
+    let newArr = [1,2,3,4,5].abc()
+    console.log('newArr', newArr)
   </script>
 </body>
 </html>
